@@ -101,8 +101,6 @@ Custom configuration is preserved for users who do not want to rely on a shared 
 
 ### Known limitations
 
-- End-to-end Reddit OAuth authentication is not guaranteed.
-- The RedReader preset has not been independently verified for successful login.
 - The subscription activity fingerprints are optional. Successful patching does not guarantee that every subscription-related modification was applied.
 - Future Infinity+ updates may introduce bytecode changes requiring additional patches.
 - Other Infinity variants, including the Patreon package, are not supported by this patch source.
