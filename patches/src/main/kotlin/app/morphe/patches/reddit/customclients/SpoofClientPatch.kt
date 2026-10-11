@@ -15,7 +15,10 @@ import app.morphe.patcher.patch.stringOption
 /**
  * Base class for patches that spoof the Reddit client.
  *
- * @param block The patch block. It is called with the client ID option and redirect URI option.
+ * Supports a RedReader OAuth preset or a custom client ID.
+ *
+ * @param block The patch block. It is called with the client ID,
+ * redirect URI, and user agent options.
  */
 fun spoofClientPatch(
     name: String,
@@ -31,44 +34,48 @@ fun spoofClientPatch(
     default = true
 ) {
     val clientIdOption = stringOption(
-        "client-id",
-        null,
-        null,
-        "OAuth client ID",
-        "The Reddit OAuth client ID. Refer to Patcheddit documentation for more " +
-                "information on what to put here.",
-        true,
+        key = "client-id",
+        default = null,
+        values = mapOf(
+            "RedReader (shared client ID)" to "yH0aTnJEt6qUgGn835B4vg"
+        ),
+        title = "OAuth client ID",
+        description = "Select the RedReader preset or enter your own " +
+                "22-character Reddit OAuth client ID. Shared client IDs " +
+                "may be restricted or stop working.",
+        required = true,
         validator = { value ->
-            if (value.isNullOrBlank()) {
-                return@stringOption false
-            }
-            if (!value.matches(Regex("^[\\w-]{22}$"))) {
-                return@stringOption false
-            }
-            true
+            !value.isNullOrBlank() &&
+                    value.matches(Regex("^[\\w-]{22}$"))
         }
     )
+
     val redirectUriOption = stringOption(
-        "redirect-uri",
-        "redreader://rr_oauth_redir",
-        null,
-        "Redirect URI",
-        "The Reddit OAuth redirect URI. Refer to Patcheddit documentation for more " +
-                "information on what to put here. Default value is RedReader's redirect URI.",
-        true,
+        key = "redirect-uri",
+        default = "redreader://rr_oauth_redir",
+        values = null,
+        title = "Redirect URI",
+        description = "The Reddit OAuth redirect URI. " +
+                "Defaults to RedReader's redirect URI. " +
+                "Must match the selected client ID.",
+        required = true,
     )
+
     val userAgentOption = stringOption(
-        "user-agent",
-        "org.quantumbadger.redreader/1.25.1",
-        null,
-        "User agent",
-        "The app's user agent. Refer to Patcheddit documentation for more information " +
-                "on what to put here. Default value is RedReader's user agent.",
-        true
+        key = "user-agent",
+        default = "org.quantumbadger.redreader/1.25.2",
+        values = null,
+        title = "User agent",
+        description = "The Reddit API user agent. " +
+                "Defaults to RedReader's user agent. " +
+                "Custom client IDs may require a matching user agent.",
+        required = true
     )
 
     block(
-        clientIdOption, redirectUriOption, userAgentOption
+        clientIdOption,
+        redirectUriOption,
+        userAgentOption
     )
 }
 
@@ -80,6 +87,7 @@ fun spoofClientPatch(
     ) -> Unit,
 ) = spoofClientPatch(
     name = "Spoof client",
-    description = "Restores functionality of the app by using custom client ID.",
+    description = "Restores Infinity+ Reddit API functionality using " +
+            "a selectable OAuth client ID preset or custom credentials.",
     block = block,
 )
