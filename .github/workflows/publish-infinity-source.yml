@@ -66,7 +66,7 @@ jobs:
           version = os.environ['VERSION']
           repo = os.environ['GITHUB_REPOSITORY']
           metadata = {
-              'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S'),
               'description': f'Infinity+ Morphe patches v{version}. Based on Patcheddit; see NOTICE.',
               'download_url': f'https://github.com/{repo}/releases/download/v{version}/patches-{version}.mpp',
               'signature_download_url': '',
