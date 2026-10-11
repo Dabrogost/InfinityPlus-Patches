@@ -8,6 +8,7 @@ gson = "2.13.2"
 guava = "33.5.0-jre"
 okhttp = "5.3.2"
 androidx-preference = "1.2.1"
+smali = "b6365a84f4"
 
 [libraries]
 morphe-patches-library = { module = "app.morphe:morphe-patches-library", version.ref = "morphe-patches-library" }
