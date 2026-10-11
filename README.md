@@ -15,9 +15,17 @@ fingerprint compatibility change proposed in [PR #108](https://github.com/wchill
 The two patches share an Infinity-specific extension and a small shared login helper.
 Other Reddit applications and their patches have been removed.
 
-## Install
+## Install in Morphe Manager
 
-[**Add Infinity+ Patches to Morphe Manager**](https://morphe.software/add-source?github=Dabrogost/InfinityPlus-Patches)
+[**Add Infinity+ Patches to Morphe**](https://morphe.software/add-source?github=Dabrogost/InfinityPlus-Patches)
+
+Open the link in your browser and tap **Open in Morphe**.
+
+**Manual installation:**
+1. Open Morphe Manager.
+2. Go to Sources → + → Remote.
+3. Paste `https://github.com/Dabrogost/InfinityPlus-Patches`.
+4. Tap Add.
 
 ## Build
 
