@@ -33,8 +33,6 @@ Both patches retain their required shared extensions and dependencies.
 
 ### Add to Morphe Manager
 
-Install [Morphe Manager](https://morphe.software/) and enable Advanced/Expert mode if required.
-
 [**Add Infinity+ Patches to Morphe Manager**](https://morphe.software/add-source?github=Dabrogost/InfinityPlus-Patches)
 
 If the link does not open Morphe Manager on your device, add the source manually:
