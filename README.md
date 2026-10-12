@@ -14,11 +14,16 @@ The patches retain Infinity-specific and shared extensions. Patches for other Re
 
 ## Install in Morphe Manager
 
-[**Add Infinity+ Patches to Morphe**](https://morphe.software/add-source?github=Dabrogost/InfinityPlus-Patches)
+1. Open Morphe Manager → **Sources → + → Remote**.
+2. Paste this source URL and tap **Add**:
 
-Or open Morphe Manager → **Sources → + → Remote**, enter `https://github.com/Dabrogost/InfinityPlus-Patches`, and tap Add. You can then select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
+   ```text
+   https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json
+   ```
 
-**Note:** The above GitHub-hosted source and links may be unavailable while the original repository account is suspended. The Gitea publish workflow writes current release URLs to `patches-bundle.json` after a successful upload. The metadata is available at `https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json`; the repository itself does not store compiled bundles.
+3. Select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
+
+Use the full raw `patches-bundle.json` URL above as the source. It is the [source metadata](https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json) that tells Morphe where to download the patch bundle. The publish workflow updates this same URL's contents for each release, so you can keep the source configured when new versions are published.
 
 ### OAuth settings
 
@@ -31,7 +36,7 @@ The preset is sourced from [Continuum's public code](https://github.com/cygnusx-
 
 ## Build
 
-The **Build Infinity+ patches** workflow runs on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
+The **Build Infinity+ patches** workflow runs manually on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. Start it from **Actions → Build Infinity+ patches → Run workflow**. Pushes and pull requests do not start it automatically. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
 
 For a local Linux build, install JDK 17 and Android SDK platforms 33, 34, 35 and 36 plus build-tools 36.0.0, set `ANDROID_HOME`, then run:
 
