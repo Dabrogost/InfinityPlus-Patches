@@ -31,15 +31,19 @@ The preset is sourced from [Continuum's public code](https://github.com/cygnusx-
 
 ## Build
 
-Use JDK 17 and the Gradle wrapper with access to the required Morphe dependencies:
+The **Build Infinity+ patches** workflow runs on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
+
+For a local Linux build, install JDK 17 and Android SDK platforms 33, 34, 35 and 36 plus build-tools 36.0.0, set `ANDROID_HOME`, then run:
 
 ```bash
-./gradlew :patches:buildAndroid --no-daemon
+bash ci/build.sh
 ```
 
-On Windows use `gradlew.bat`. The resulting `.mpp` should appear under `patches/build/libs/`.
+The script builds the required Morphe plugin and libraries from pinned public source revisions and publishes them into a private local Maven directory under `~/.cache/infinity-plus-deps`. It disables GitHub Packages resolution for this build. Public downloads from GitHub, Maven Central, Google and JitPack are still required. The first run builds the dependencies; later runs reuse the workflow cache. See [ci/README.md](ci/README.md) for the pinned versions and maintenance notes.
 
-GitHub **Actions → Build Infinity+ patches** builds an artifact for testing. **Publish Infinity+ source** manually builds, publishes a versioned `.mpp` in GitHub Releases, and updates `patches-bundle.json`. This GitHub-specific publishing workflow will need adaptation if moved to another hosting service.
+The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, use a Linux environment with the SDK (such as WSL2) for this script.
+
+**Publish Infinity+ source** uses the same build script, but its release-publication and source-metadata steps still target GitHub and require a working GitHub account. For Gitea builds, use **Build Infinity+ patches** and download its artifact; GitHub release publication is not required.
 
 ## Testing and limitations
 

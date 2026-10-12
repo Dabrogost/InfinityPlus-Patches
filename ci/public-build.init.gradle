@@ -1,0 +1,19 @@
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.plugins.signing.Sign
+
+// build.sh supplies placeholders for upstream's eager credential configuration.
+// No requests are sent to GitHub Packages: remove those repositories entirely.
+def removeGitHubPackages = { repositories ->
+    repositories.removeAll { it instanceof MavenArtifactRepository && it.url.host == 'maven.pkg.github.com' }
+}
+gradle.settingsEvaluated { settings ->
+    removeGitHubPackages(settings.pluginManagement.repositories)
+    removeGitHubPackages(settings.dependencyResolutionManagement.repositories)
+}
+gradle.beforeProject { project ->
+    project.tasks.withType(Sign).configureEach { enabled = false }
+    project.tasks.withType(Javadoc).configureEach { enabled = false }
+}
+gradle.afterProject { project ->
+    removeGitHubPackages(project.repositories)
+}
