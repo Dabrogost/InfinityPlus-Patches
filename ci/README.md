@@ -36,5 +36,8 @@ Validate with a fresh `INFINITY_DEPS_HOME` before pushing. The final `.mpp`
 build still uses the project's Gradle wrapper and `:patches:buildAndroid` task.
 
 The build produces a bundle; it does not test patching an APK or phone behavior.
-The separate manual release workflow still publishes to GitHub. Gitea users
-can download the bundle from the normal build workflow's artifact instead.
+The manual release workflow publishes to Gitea using the job's built-in token.
+Its Python helper creates a draft, uploads and verifies the asset, publishes
+the release, then generates source metadata from Gitea's returned download URL.
+Run its mocked API tests with `python3 -m unittest discover -s ci -p 'test_*.py'`.
+No release is published by the tests.

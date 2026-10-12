@@ -18,7 +18,7 @@ The patches retain Infinity-specific and shared extensions. Patches for other Re
 
 Or open Morphe Manager → **Sources → + → Remote**, enter `https://github.com/Dabrogost/InfinityPlus-Patches`, and tap Add. You can then select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
 
-**Note:** The above GitHub-hosted source and links may be unavailable while the original repository account is suspended. A future mirror will need new release URLs and metadata; this archive does not include the compiled `.mpp` release.
+**Note:** The above GitHub-hosted source and links may be unavailable while the original repository account is suspended. The Gitea publish workflow writes current release URLs to `patches-bundle.json` after a successful upload. The metadata is available at `https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json`; the repository itself does not store compiled bundles.
 
 ### OAuth settings
 
@@ -43,7 +43,7 @@ The script builds the required Morphe plugin and libraries from pinned public so
 
 The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, use a Linux environment with the SDK (such as WSL2) for this script.
 
-**Publish Infinity+ source** uses the same build script, but its release-publication and source-metadata steps still target GitHub and require a working GitHub account. For Gitea builds, use **Build Infinity+ patches** and download its artifact; GitHub release publication is not required.
+**Publish Infinity+ source** is a manual Gitea workflow. Run it on `main` after pushing these changes. It builds the bundle, creates a draft release for the version in `gradle.properties`, uploads the `.mpp`, publishes the release, and commits `patches-bundle.json` with the download URL returned by Gitea. It uses the built-in `GITEA_TOKEN`; no personal access token is required. Repository/owner Actions settings must allow code and release writes, and branch rules must permit the metadata commit. Increment the version for a new release: an existing asset with different contents is never overwritten. If publication succeeds but the metadata push fails, resolve the branch permissions or concurrent changes before retrying. Identical assets can be reused; a different rebuilt bundle requires a new version.
 
 ## Testing and limitations
 

@@ -8,10 +8,12 @@ permissions:
 
 jobs:
   publish:
-    if: github.ref == 'refs/heads/main'
+    if: gitea.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITEA_TOKEN }}
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -51,37 +53,23 @@ jobs:
           fi
           cp "${bundles[0]}" "dist/patches-${VERSION}.mpp"
 
-      - name: Publish GitHub Release
+      - name: Publish Gitea release and generate source metadata
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_SERVER_URL: ${{ gitea.server_url }}
+          GITEA_REPOSITORY: ${{ gitea.repository }}
+          GITEA_SHA: ${{ gitea.sha }}
+        run: python3 ci/publish_gitea.py
+
+      - name: Commit source metadata
         shell: bash
         run: |
-          gh release create "v${VERSION}" "dist/patches-${VERSION}.mpp" \
-            --title "Infinity+ Patches v${VERSION}" \
-            --notes "Infinity+ Morphe compatibility patches. Includes code adapted from Patcheddit."
-
-      - name: Update Morphe source metadata
-        shell: bash
-        run: |
-          python3 - <<'PY_META'
-          import json
-          import os
-          from datetime import datetime, timezone
-          from pathlib import Path
-
-          version = os.environ['VERSION']
-          repo = os.environ['GITHUB_REPOSITORY']
-          metadata = {
-              'created_at': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S'),
-              'description': f'Infinity+ Morphe patches v{version}. Based on Patcheddit; see NOTICE.',
-              'download_url': f'https://github.com/{repo}/releases/download/v{version}/patches-{version}.mpp',
-              'signature_download_url': '',
-              'version': version,
-          }
-          Path('patches-bundle.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
-          PY_META
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name 'gitea-actions[bot]'
+          git config user.email 'gitea-actions@noreply.local'
           git add patches-bundle.json
-          git commit -m "chore: publish Morphe source v${VERSION} [skip ci]"
-          git push origin HEAD:main
+          if git diff --cached --quiet; then
+            echo 'Source metadata is already current.'
+          else
+            git commit -m "chore: publish Morphe source v${VERSION} [skip ci]"
+            git push origin HEAD:main
+          fi
