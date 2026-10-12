@@ -36,7 +36,7 @@ The preset is sourced from [Continuum's public code](https://github.com/cygnusx-
 
 ## Build
 
-The **Build Infinity+ patches** workflow runs manually on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. Start it from **Actions → Build Infinity+ patches → Run workflow**. Pushes and pull requests do not start it automatically. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
+The **Build Infinity+ patches** workflow runs on pushes to `main` on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. You can also start it manually from **Actions → Build Infinity+ patches → Run workflow**. Publishing remains manual. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
 
 For a local Linux build, install JDK 17 and Android SDK platforms 33, 34, 35 and 36 plus build-tools 36.0.0, set `ANDROID_HOME`, then run:
 
