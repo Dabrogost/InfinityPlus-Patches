@@ -7,7 +7,7 @@ A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity for
 
 ## Included patches
 
-- **Spoof client:** Replaces Reddit OAuth client ID, redirect URI and user agent. Provides an optional RedReader client ID preset or a custom 22-character ID. Includes support for the old and new Infinity+ subscription activity fingerprints.
+- **Spoof client:** Replaces Reddit OAuth client ID, redirect URI and user agent. Provides an optional RedReader client ID preset or a custom 22-character ID. Includes support for the old and new Infinity+ subscription activity fingerprints. Automatically adds the required Patcheddit attribution to Infinity+'s Settings screen, with a clickable link to the original project's subreddit.
 - **Modify login WebView:** Applies Patcheddit's existing WebView compatibility hook.
 
 The patches retain Infinity-specific and shared extensions. Patches for other Reddit applications have been removed.
@@ -24,6 +24,18 @@ The patches retain Infinity-specific and shared extensions. Patches for other Re
 3. Select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
 
 Use the full **Gitea API URL** above as the source. It serves [`patches-bundle.json`](https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json), which tells Morphe where to download the patch bundle. The publishing workflow updates this metadata for each release, so you can keep the source configured when new versions are published.
+
+### Troubleshooting updates
+
+Gitea currently serves the patch bundle metadata with a six-hour HTTP cache lifetime.
+
+If Morphe continues showing an older patch version after a new release:
+
+1. Open Android **Settings → Apps → Morphe → Storage**.
+2. Select **Clear cache** (not Clear data).
+3. Reopen Morphe Manager and refresh the patch source.
+
+This forces Morphe to retrieve fresh metadata instead of potentially reusing an older cached response.
 
 ### OAuth settings
 
@@ -51,11 +63,14 @@ The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, 
 ## Testing and limitations
 
 - Infinity+ 8.3.3 was successfully patched and signed with Morphe Manager 1.35.0 and patcher 1.15.1 on Android 16.
+- The Patcheddit attribution was verified on-device in Infinity+ 8.3.3. The complete notice appears at the bottom of the main Settings screen, and selecting it opens the Patcheddit subreddit within Infinity+.
 - Future Infinity+ releases may require new fingerprints.
 
 ## Modifications and credits
 
 This source was adapted October 11, 2026 from Patcheddit v1.4.0, incorporating Infinity+ 8.3.x fingerprint compatibility, reducing the supported app set to Infinity+, adding a RedReader OAuth preset, and adding independent release tooling.
+
+On October 13, 2026, the **Spoof client** patch was updated to insert the required Patcheddit attribution directly into Infinity+'s Settings screen.
 
 This app uses code from Patcheddit. To learn more, visit https://reddit.com/r/patcheddit
 
