@@ -70,7 +70,7 @@ The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, 
 
 This source was adapted October 11, 2026 from Patcheddit v1.4.0, incorporating Infinity+ 8.3.x fingerprint compatibility, reducing the supported app set to Infinity+, adding a RedReader OAuth preset, and adding independent release tooling.
 
-On October 13, 2026, the **Spoof client** patch was updated to insert the required Patcheddit attribution directly into Infinity+'s Settings screen.
+The **Spoof client** patch was modified to insert the required Patcheddit attribution directly into Infinity+'s Settings screen.
 
 This app uses code from Patcheddit. To learn more, visit https://reddit.com/r/patcheddit
 
