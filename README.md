@@ -18,7 +18,7 @@ The patches retain Infinity-specific and shared extensions. Patches for other Re
 2. Paste this source URL and tap **Add**:
 
    ```text
-   https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json
+https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json
    ```
 
 3. Select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
