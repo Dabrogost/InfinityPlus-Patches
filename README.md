@@ -48,8 +48,6 @@ The script builds the required Morphe plugin and libraries from pinned public so
 
 The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, use a Linux environment with the SDK (such as WSL2) for this script.
 
-**Publish Infinity+ source** is a manual Gitea workflow. Run it on `main` after pushing these changes. It builds the bundle, creates a draft release for the version in `gradle.properties`, uploads the `.mpp`, publishes the release, and commits `patches-bundle.json` with the download URL returned by Gitea. It uses the built-in `GITEA_TOKEN`; no personal access token is required. Repository/owner Actions settings must allow code and release writes, and branch rules must permit the metadata commit. Increment the version for a new release: an existing asset with different contents is never overwritten. If publication succeeds but the metadata push fails, resolve the branch permissions or concurrent changes before retrying. Identical assets can be reused; a different rebuilt bundle requires a new version.
-
 ## Testing and limitations
 
 - Infinity+ 8.3.3 was successfully patched and signed with Morphe Manager 1.35.0 and patcher 1.15.1 on Android 16.
