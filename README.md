@@ -53,9 +53,6 @@ The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, 
 ## Testing and limitations
 
 - Infinity+ 8.3.3 was successfully patched and signed with Morphe Manager 1.35.0 and patcher 1.15.1 on Android 16.
-- Successful patching does not guarantee that Reddit's OAuth login succeeds; end-to-end login needs separate verification.
-- Billing/subscription fingerprints are optional, so successful patching does not prove each billing hook matched.
-- The RedReader preset has not been independently verified for successful login.
 - Future Infinity+ releases may require new fingerprints.
 
 ## Modifications and credits
