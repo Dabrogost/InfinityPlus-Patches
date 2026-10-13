@@ -18,12 +18,12 @@ The patches retain Infinity-specific and shared extensions. Patches for other Re
 2. Paste this source URL and tap **Add**:
 
    ```text
-https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json
+   https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json
    ```
 
 3. Select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
 
-Use the full raw `patches-bundle.json` URL above as the source. It is the [source metadata](https://gitea.com/Dabrogost/InfinityPlus-Patches/raw/branch/main/patches-bundle.json) that tells Morphe where to download the patch bundle. The publish workflow updates this same URL's contents for each release, so you can keep the source configured when new versions are published.
+Use the full **Gitea API URL** above as the source. It serves [`patches-bundle.json`](https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json), which tells Morphe where to download the patch bundle. The publishing workflow updates this metadata for each release, so you can keep the source configured when new versions are published.
 
 ### OAuth settings
 
