@@ -7,27 +7,27 @@
 
 package app.morphe.patches.reddit.customclients.infinity.api
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
-import app.morphe.patcher.resource.utf8Writer
-import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patches.reddit.customclients.infinity.InfinityCompatible
 import app.morphe.patches.reddit.customclients.infinity.misc.extension.sharedExtensionPatch
 import app.morphe.patches.reddit.customclients.spoofClientPatch
-import app.morphe.util.getNode
-import app.morphe.util.registersUsed
 import app.morphe.util.replaceStringMatchesWithFunc
 import app.morphe.util.returnEarly
-import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import org.w3c.dom.Element
 
 internal const val EXTENSION_CLASS_NAME = "Lapp/morphe/extension/infinity/APIUtils;"
 internal const val FRAGMENT_CLASS_NAME = "app.morphe.extension.infinity.APIKeysPreferenceFragment"
 internal const val GET_CLIENT_ID_METHOD = "$EXTENSION_CLASS_NAME->getClientId"
 internal const val GET_USER_AGENT_METHOD = "$EXTENSION_CLASS_NAME->getUserAgent"
 internal const val GET_REDIRECT_URI_METHOD = "$EXTENSION_CLASS_NAME->getRedirectUri"
+
+private const val ANDROID_NAMESPACE = "http://schemas.android.com/apk/res/android"
+private const val ATTRIBUTION_KEY = "morphe_patcheddit_attribution"
+private const val ATTRIBUTION_TEXT =
+    "This app uses code from Patcheddit. To learn more, visit https://reddit.com/r/patcheddit"
+private const val ATTRIBUTION_URL = "https://reddit.com/r/patcheddit"
 
 private val disableBillingPatch = bytecodePatch(
     default = false
@@ -47,66 +47,42 @@ val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, use
     dependsOn(
         disableBillingPatch,
         sharedExtensionPatch,
-        resourcePatch(
-            default = false
-        ) {
+        resourcePatch(default = false) {
             execute {
-                /*
-                get("res/xml/api_keys_preferences.xml").utf8Writer().use { writer ->
-                    writer.write("""
-                        <?xml version="1.0" encoding="utf-8"?>
-                        <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                            xmlns:app="http://schemas.android.com/apk/res-auto">
-                        </androidx.preference.PreferenceScreen>
-                    """.trimIndent())
-                }
-                document("res/xml/api_keys_preferences.xml").use { document ->
-                    val rootNode = document.getNode("androidx.preference.PreferenceScreen")
-                    val clientIdPreferenceNode = document.createElement("EditTextPreference").apply {
-                        setAttribute("android:defaultValue", clientId!!)
-                        setAttribute("android:key", "morphe_client_id_pref_key")
-                        setAttribute("android:title", "Client ID")
-                        setAttribute("android:summary", "Tap to set custom client ID")
-                        setAttribute("app:iconSpaceReserved", "false")
-                        setAttribute("app:useSimpleSummaryProvider", "true")
-                    }
-
-                    val redirectUriPreferenceNode = document.createElement("EditTextPreference").apply {
-                        setAttribute("android:defaultValue", redirectUri!!)
-                        setAttribute("android:key", "morphe_redirect_uri_pref_key")
-                        setAttribute("android:title", "Redirect URI")
-                        setAttribute("android:summary", "Tap to set custom redirect URI")
-                        setAttribute("app:iconSpaceReserved", "false")
-                        setAttribute("app:useSimpleSummaryProvider", "true")
-                    }
-
-                    val userAgentPreferenceNode = document.createElement("EditTextPreference").apply {
-                        setAttribute("android:defaultValue", userAgent!!)
-                        setAttribute("android:key", "morphe_user_agent_pref_key")
-                        setAttribute("android:title", "User Agent")
-                        setAttribute("android:summary", "Tap to set custom user agent")
-                        setAttribute("app:iconSpaceReserved", "false")
-                        setAttribute("app:useSimpleSummaryProvider", "true")
-                    }
-
-                    rootNode.insertBefore(clientIdPreferenceNode, null)
-                    rootNode.insertBefore(redirectUriPreferenceNode, null)
-                    rootNode.insertBefore(userAgentPreferenceNode, null)
-                }
-
                 document("res/xml/main_preferences.xml").use { document ->
-                    val rootNode = document.getNode("androidx.preference.PreferenceScreen")
-                    val apiPreferenceNode = document.createElement("ml.docilealligator.infinityforreddit.customviews.preference.CustomFontPreferenceWithBackground").apply {
-                        setAttribute("app:icon", "@drawable/ic_settings_day_night_24dp")
-                        setAttribute("app:title", "Patcheddit settings")
-                        setAttribute("app:summary", "Tap to open Patcheddit settings")
-                        setAttribute("app:fragment", FRAGMENT_CLASS_NAME)
+                    val root = document.documentElement
+                        ?: error("Missing root element in res/xml/main_preferences.xml")
+
+                    require(root.tagName == "androidx.preference.PreferenceScreen" ||
+                            root.tagName == "PreferenceScreen") {
+                        "Unexpected settings root element: ${root.tagName}"
                     }
 
-                    // TODO: Uncomment this when preference menu works
-                    //rootNode.insertFirst(apiPreferenceNode)
+                    // Avoid inserting the same notice more than once.
+                    val elements = document.getElementsByTagName("*")
+                    for (i in 0 until elements.length) {
+                        val element = elements.item(i) as? Element ?: continue
+                        if (element.getAttributeNS(ANDROID_NAMESPACE, "key") == ATTRIBUTION_KEY ||
+                            element.getAttribute("android:key") == ATTRIBUTION_KEY) {
+                            return@use
+                        }
+                    }
+
+                    val attribution = document.createElement("androidx.preference.Preference").apply {
+                        setAttributeNS(ANDROID_NAMESPACE, "android:key", ATTRIBUTION_KEY)
+                        setAttributeNS(ANDROID_NAMESPACE, "android:title", "Patcheddit Attribution")
+                        setAttributeNS(ANDROID_NAMESPACE, "android:summary", ATTRIBUTION_TEXT)
+                        setAttributeNS(ANDROID_NAMESPACE, "android:persistent", "false")
+                    }
+
+                    val intent = document.createElement("intent").apply {
+                        setAttributeNS(ANDROID_NAMESPACE, "android:action", "android.intent.action.VIEW")
+                        setAttributeNS(ANDROID_NAMESPACE, "android:data", ATTRIBUTION_URL)
+                    }
+
+                    attribution.appendChild(intent)
+                    root.appendChild(attribution)
                 }
-                */
             }
         }
     )
@@ -134,26 +110,5 @@ val spoofClientPatch = spoofClientPatch { clientIdOption, redirectUriOption, use
         redirectUriFingerprint.matchAll().forEach { match ->
             match.replaceStringMatchesWithFunc(GET_REDIRECT_URI_METHOD)
         }
-
-        /*
-        settingsActivityOnBackStackChangedFingerprint.match().apply {
-            val match = instructionMatches[3]
-            val index = match.index
-            val regA = match.instruction.registersUsed[0]
-            val regB = match.instruction.registersUsed[1]
-            val regC = instructionMatches[6].instruction.registersUsed[0]
-
-            // TODO: Jank, figure out how to reference the actual goto target
-            method.addInstructionsWithLabels(
-                index,
-                """
-                    instance-of v$regA, v$regB, Lapp/morphe/extension/infinity/APIKeysPreferenceFragment;
-                    if-eqz v$regA, :skip
-                    const-string v$regB, "API Keys"
-                    invoke-virtual {v$regC, v$regB}, Landroid/app/Activity;->setTitle(Ljava/lang/CharSequence;)V
-                """, ExternalLabel("skip", method.getInstruction(index))
-            )
-        }
-        */
     }
 }

@@ -1,207 +1,81 @@
 # Infinity+ Patches
 
-A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity for Reddit+**, focused on restoring Reddit OAuth functionality and maintaining compatibility with newer Infinity+ releases.
+A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity+ for Reddit**, based on [Patcheddit](https://github.com/wchill/patcheddit) v1.4.0, with the Infinity+ 8.3.x subscription fingerprint compatibility change proposed in [PR #108](https://github.com/wchill/patcheddit/pull/108).
 
-Based on [Patcheddit](https://github.com/wchill/patcheddit) v1.4.0, with additional Infinity+ compatibility improvements.
+**Supported package:** `ml.docilealligator.infinityforreddit.plus` (Infinity+ only; not Patreon).  
+**Tested APK version:** 8.3.3.
 
-This project maintains only the Infinity+ patches, removing the other Reddit clients and their associated patch implementations.
+## Included patches
 
-**Supported application:** Infinity for Reddit+  
-**Package:** `ml.docilealligator.infinityforreddit.plus`  
-**Tested version:** 8.3.3
+- **Spoof client:** Replaces Reddit OAuth client ID, redirect URI and user agent. Provides an optional RedReader client ID preset or a custom 22-character ID. Includes support for the old and new Infinity+ subscription activity fingerprints. Automatically adds the required Patcheddit attribution to Infinity+'s Settings screen, with a clickable link to the original project's subreddit.
+- **Modify login WebView:** Applies Patcheddit's existing WebView compatibility hook.
 
-## Features
+The patches retain Infinity-specific and shared extensions. Patches for other Reddit applications have been removed.
 
-### Spoof client
+## Install in Morphe Manager
 
-Modifies Infinity+'s Reddit OAuth configuration, including:
+1. Open Morphe Manager → **Sources → + → Remote**.
+2. Paste this source URL and tap **Add**:
 
-- **OAuth client ID:** Use a selectable RedReader preset or enter a custom client ID.
-- **Redirect URI:** Defaults to `redreader://rr_oauth_redir`.
+   ```text
+   https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json
+   ```
+
+3. Select an unmodified Infinity+ APK, enable the two patches and configure **Spoof client**.
+
+Use the full **Gitea API URL** above as the source. It serves [`patches-bundle.json`](https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle.json), which tells Morphe where to download the patch bundle. The publishing workflow updates this metadata for each release, so you can keep the source configured when new versions are published.
+
+### Troubleshooting updates
+
+Gitea currently serves the patch bundle metadata with a six-hour HTTP cache lifetime.
+
+If Morphe continues showing an older patch version after a new release:
+
+1. Open Android **Settings → Apps → Morphe → Storage**.
+2. Select **Clear cache** (not Clear data).
+3. Reopen Morphe Manager and refresh the patch source.
+
+This forces Morphe to retrieve fresh metadata instead of potentially reusing an older cached response.
+
+### OAuth settings
+
+- **RedReader preset:** Select **RedReader (shared client ID)** from the OAuth client ID dropdown.
+- **Custom OAuth client ID:** Enter an appropriate 22-character client ID manually.
+- **Redirect URI:** Defaults to `redreader://rr_oauth_redir` and must match the registered OAuth client configuration.
 - **User agent:** Defaults to `org.quantumbadger.redreader/1.25.2`.
-- **Subscription compatibility:** Handles both the older and newer subscription activity fingerprints.
 
-The subscription fingerprint improvements are based on the changes proposed in [Patcheddit PR #108](https://github.com/wchill/patcheddit/pull/108).
+The preset is sourced from [Continuum's public code](https://github.com/cygnusx-1-org/continuum). Public availability does not establish permission to reuse RedReader's OAuth identity; Reddit may restrict or revoke it. Users must still authorize their Reddit accounts.
 
-### Modify login WebView
+## Build
 
-Includes Patcheddit's existing WebView compatibility patch to help resolve Reddit login issues.
+The **Build Infinity+ patches** workflow runs on pushes to `main` on Gitea or GitHub and uploads the `.mpp` as a workflow artifact. You can also start it manually from **Actions → Build Infinity+ patches → Run workflow**. Publishing remains manual. No GitHub account, personal access token, or `GH_PACKAGES_*` secrets are needed for the build. Download the artifact from the successful Actions run.
 
-Both patches retain their required shared extensions and dependencies.
+For a local Linux build, install JDK 17 and Android SDK platforms 33, 34, 35 and 36 plus build-tools 36.0.0, set `ANDROID_HOME`, then run:
 
-## Installation
+```bash
+bash ci/build.sh
+```
 
-### Add to Morphe Manager
+The script builds the required Morphe plugin and libraries from pinned public source revisions and publishes them into a private local Maven directory under `~/.cache/infinity-plus-deps`. It disables GitHub Packages resolution for this build. Public downloads from GitHub, Maven Central, Google and JitPack are still required. The first run builds the dependencies; later runs reuse the workflow cache. See [ci/README.md](ci/README.md) for the pinned versions and maintenance notes.
 
-[**Add Infinity+ Patches to Morphe Manager**](https://morphe.software/add-source?github=Dabrogost/InfinityPlus-Patches)
+The resulting bundle is `patches/build/libs/patches-<version>.mpp`. On Windows, use a Linux environment with the SDK (such as WSL2) for this script.
 
-If the link does not open Morphe Manager on your device, add the source manually:
+## Testing and limitations
 
-1. Open **Morphe Manager**.
-2. Navigate to **Sources → + → Remote**.
-3. Enter the following repository URL:  
-   `https://github.com/Dabrogost/InfinityPlus-Patches`
-4. Tap **Add** and allow the patch bundle to download.
+- Infinity+ 8.3.3 was successfully patched and signed with Morphe Manager 1.35.0 and patcher 1.15.1 on Android 16.
+- The Patcheddit attribution was verified on-device in Infinity+ 8.3.3. The complete notice appears at the bottom of the main Settings screen, and selecting it opens the Patcheddit subreddit within Infinity+.
+- Future Infinity+ releases may require new fingerprints.
 
-### Patch Infinity+
+## Modifications and credits
 
-1. Obtain an unmodified Infinity for Reddit+ APK.
-2. Select the APK in Morphe Manager.
-3. Enable **Spoof client** and **Modify login WebView**.
-4. Open the **Spoof client** options and configure your OAuth client ID.
-5. Start patching.
-6. Install the patched APK and authorize your Reddit account.
+This source was adapted October 11, 2026 from Patcheddit v1.4.0, incorporating Infinity+ 8.3.x fingerprint compatibility, reducing the supported app set to Infinity+, adding a RedReader OAuth preset, and adding independent release tooling.
 
-If Android rejects installation because of an existing application's signing certificate, you may need to uninstall the existing installation first. Back up your application data before doing so.
-
-**Note:** This repository distributes patches, not a pre-patched Infinity+ APK.
-
-## Reddit OAuth Configuration
-
-Reddit requires a valid OAuth client ID for third-party applications.
-
-The **Spoof client** patch provides two configuration methods.
-
-### Option 1: RedReader preset
-
-Select **RedReader (shared client ID)** from the OAuth client ID dropdown.
-
-The preset uses the public OAuth client ID included in [Continuum](https://github.com/cygnusx-1-org/continuum), an open-source Infinity fork.
-
-This eliminates the need to install RedReader simply to retrieve its client ID.
-
-The default redirect URI and user agent are configured for RedReader.
-
-**Important:** This is an unofficial use of RedReader's OAuth identity. Public availability of its client ID does not establish permission from Reddit or RedReader to reuse it. Shared credentials may be restricted, rate-limited, or revoked at any time.
-
-### Option 2: Custom client ID
-
-Users with their own Reddit OAuth credentials can enter their client ID manually.
-
-The redirect URI must match the URI registered for that OAuth application. The user agent should also be appropriate for the selected client.
-
-Custom configuration is preserved for users who do not want to rely on a shared OAuth identity.
-
-### Login considerations
-
-- Reddit may display **RedReader** during authorization when the RedReader preset is selected. This reflects the OAuth application identity and does not mean RedReader is installed.
-- Users must still authorize access to their Reddit accounts.
-- Successful patching does not guarantee that Reddit will accept the OAuth credentials.
-- If login fails, verify the client ID, redirect URI, and user agent before investigating WebView compatibility.
-
-## Compatibility and Testing
-
-### Verified
-
-- Infinity+ **8.3.3** successfully patched.
-- Morphe Manager **1.35.0**, patcher **1.15.1**.
-- Android 16, ARM64.
-- Both **Spoof client** and **Modify login WebView** completed without patch errors.
-- The resulting APK was compiled and signed successfully.
-
-### Known limitations
-
-- The subscription activity fingerprints are optional. Successful patching does not guarantee that every subscription-related modification was applied.
-- Future Infinity+ updates may introduce bytecode changes requiring additional patches.
-- Other Infinity variants, including the Patreon package, are not supported by this patch source.
-
-Bug reports and compatibility issues can be submitted through [GitHub Issues](https://github.com/Dabrogost/InfinityPlus-Patches/issues).
-
-## Building from Source
-
-### Requirements
-
-- JDK 17
-- Git
-- Gradle wrapper included in this repository
-- Access to the required Morphe Gradle dependencies
-
-Clone the repository:
-
-`git clone https://github.com/Dabrogost/InfinityPlus-Patches.git`
-
-Enter the project directory:
-
-`cd InfinityPlus-Patches`
-
-Build the Android-compatible patch bundle:
-
-`./gradlew :patches:buildAndroid --no-daemon`
-
-The compiled `.mpp` bundle will be available in `patches/build/libs/`.
-
-On Windows, use `gradlew.bat` instead of `./gradlew`.
-
-### GitHub Actions
-
-The repository provides two workflows:
-
-**Build Infinity+ patches**
-
-Compiles the project and uploads a downloadable `.mpp` build artifact. This workflow is intended for compilation checks and testing.
-
-**Publish Infinity+ source**
-
-A manually triggered workflow that:
-
-1. Builds the Android-compatible patch bundle.
-2. Creates a versioned GitHub Release containing the `.mpp` file.
-3. Updates `patches-bundle.json` with the new release information.
-4. Makes the new release available through Morphe Manager's remote source updates.
-
-The version is controlled through `gradle.properties`.
-
-Published patch bundles are currently unsigned.
-
-See [Releases](https://github.com/Dabrogost/InfinityPlus-Patches/releases) for available versions.
-
-## Project Background
-
-This project originated from Patcheddit v1.4.0, which supports multiple third-party Reddit applications.
-
-Infinity+ 8.3.x introduced a subscription activity implementation that could cause the original **Spoof client** patch to fail during fingerprint matching.
-
-The proposed upstream fix added compatibility with the newer activity pattern. This repository incorporates that change while reducing the patch bundle to the Infinity+ components.
-
-The goal is to maintain a small, focused patch source without requiring users to install or maintain the entire Patcheddit patch collection.
-
-### Modifications
-
-Changes introduced October 11, 2026 include:
-
-- Removed unrelated Reddit client patches and dependencies.
-- Retained Infinity+-specific bytecode patches and shared extensions.
-- Incorporated the newer subscription activity fingerprint handling from [PR #108](https://github.com/wchill/patcheddit/pull/108).
-- Added an optional RedReader OAuth client ID preset.
-- Updated the default RedReader user agent.
-- Established independent GitHub Actions builds and versioned releases.
-- Added remote patch source compatibility for Morphe Manager.
-
-## Attribution and License
-
-This project is a derivative of [Patcheddit](https://github.com/wchill/patcheddit), originally developed by **wchill** and contributors, and includes components associated with the [Morphe project](https://github.com/MorpheApp).
-
-Licensed under the **GNU General Public License v3.0**, with applicable additional conditions under Section 7.
-
-### Patcheddit attribution
+The **Spoof client** patch was modified to insert the required Patcheddit attribution directly into Infinity+'s Settings screen.
 
 This app uses code from Patcheddit. To learn more, visit https://reddit.com/r/patcheddit
 
-Patcheddit's additional terms require preservation of attribution and prohibit derivatives from using the Patcheddit project name.
-
-### Morphe attribution
-
 This app uses code from Morphe. To learn more, visit http://morphe.software
 
-Applicable Morphe Section 7 notices are preserved with the redistributed source resources.
+Licensed under **GNU GPLv3** subject to applicable additional conditions under Section 7. See [LICENSE](LICENSE), [NOTICE](NOTICE), [COPYRIGHT](COPYRIGHT), and [Morphe's license notice](patches/src/main/resources/branding-license/LICENSE_MORPHE.TXT).
 
-### License files
-
-- [LICENSE](LICENSE) — GNU General Public License v3.0
-- [NOTICE](NOTICE) — Patcheddit additional licensing conditions
-- [COPYRIGHT](COPYRIGHT) — Original copyright and attribution notices
-- [LICENSE_MORPHE.TXT](patches/src/main/resources/branding-license/LICENSE_MORPHE.TXT) — Additional Morphe licensing conditions
-
-Original Patcheddit source: https://github.com/wchill/patcheddit
-
-Infinity+ Patches is an independently maintained project and is not officially affiliated with or endorsed by Reddit, RedReader, Infinity for Reddit, Patcheddit, or Morphe.
+Not affiliated with Reddit, RedReader, Infinity for Reddit, Patcheddit or Morphe.
