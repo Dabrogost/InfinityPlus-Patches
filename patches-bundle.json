@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-10-13T02:11:27",
-  "description": "Infinity+ Morphe patches v0.1.5. Based on Patcheddit; see NOTICE.",
-  "download_url": "https://gitea.com/attachments/4b35dfc9-4c71-4621-863c-3d6294d2b61b",
+  "created_at": "2026-10-15T05:59:24",
+  "description": "Infinity+ Morphe patches v0.1.6. Based on Patcheddit; see NOTICE.",
+  "download_url": "https://github.com/Dabrogost/InfinityPlus-Patches/releases/download/v0.1.6/patches-0.1.6.mpp",
   "signature_download_url": "",
-  "version": "0.1.5"
+  "version": "0.1.6"
 }
