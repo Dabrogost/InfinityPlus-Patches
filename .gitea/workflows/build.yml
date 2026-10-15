@@ -1,0 +1,37 @@
+name: Build Infinity+ patches
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          cmdline-tools-version: '13114758'
+          packages: 'platform-tools platforms;android-33 platforms;android-34 platforms;android-35 platforms;android-36 build-tools;36.0.0'
+      - name: Cache locally built Morphe dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/infinity-plus-deps
+          key: morphe-source-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('ci/**', 'gradle/libs.versions.toml', 'settings.gradle.kts') }}
+      - name: Build Morphe patch bundle without GitHub credentials
+        run: bash ci/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: infinity-plus-morphe-patches
+          path: patches/build/libs/*.mpp
+          if-no-files-found: error
