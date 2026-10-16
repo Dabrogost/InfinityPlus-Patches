@@ -36,8 +36,14 @@ Validate with a fresh `INFINITY_DEPS_HOME` before pushing. The final `.mpp`
 build still uses the project's Gradle wrapper and `:patches:buildAndroid` task.
 
 The build produces a bundle; it does not test patching an APK or phone behavior.
-The manual release workflow publishes to Gitea using the job's built-in token.
-Its Python helper creates a draft, uploads and verifies the asset, publishes
-the release, then generates source metadata from Gitea's returned download URL.
-Run its mocked API tests with `python3 -m unittest discover -s ci -p 'test_*.py'`.
+The manual GitHub [**Publish Infinity+ source** workflow](../.github/workflows/publish-infinity-source.yml)
+runs on `main` using the `github-infinity` self-hosted runner. It builds the bundle,
+publishes a GitHub Release using `GITHUB_TOKEN`, and commits updated
+`patches-bundle.json` metadata pointing to the GitHub release asset.
+
+The separate `publish_gitea.py` helper is retained for Gitea publishing; it is
+not used by the GitHub publish workflow. It creates a draft, uploads and verifies
+the asset, publishes the release, then generates source metadata from Gitea's
+returned download URL.
+Run the helper's mocked API tests with `python3 -m unittest discover -s ci -p 'test_*.py'`.
 No release is published by the tests.

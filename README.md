@@ -7,7 +7,7 @@ This project maintains only the Infinity+ patches, removing implementations for 
 **Supported package:** `ml.docilealligator.infinityforreddit.plus` (Infinity+ only; not Patreon)  
 **Tested APK:** Infinity+ 8.3.3  
 **GitHub repository:** [InfinityPlus-Patches](https://github.com/Dabrogost/InfinityPlus-Patches)  
-**Gitea mirror / published bundle:** [InfinityPlus-Patches](https://gitea.com/Dabrogost/InfinityPlus-Patches)
+**Gitea mirror:** [InfinityPlus-Patches](https://gitea.com/Dabrogost/InfinityPlus-Patches)
 
 ## Features
 
@@ -49,7 +49,7 @@ https://gitea.com/api/v1/repos/Dabrogost/InfinityPlus-Patches/raw/patches-bundle
 
 Tap **Add** and allow the patch bundle metadata to load.
 
-The current GitHub `patches-bundle.json` points to a **Gitea-hosted `.mpp` release asset**. Both installation sources currently refer to the same published bundle; keep their metadata synchronized when publishing subsequent versions.
+The `patches-bundle.json` metadata points to a **GitHub-hosted `.mpp` release asset**. The GitHub **Publish Infinity+ source** workflow builds and publishes new bundles on GitHub, then updates this metadata to point to the GitHub release asset. Keep the Gitea mirror's metadata synchronized if using that source.
 
 ### Patch Infinity+
 
@@ -145,7 +145,7 @@ See [ci/README.md](ci/README.md) for dependency versions, cache details, and mai
 
 The GitHub **Build Infinity+ patches** workflow runs on pushes to `main` and supports manual execution. It uses the `github-infinity` self-hosted runner and uploads the `.mpp` file as a workflow artifact.
 
-**Building and publishing are separate steps.** The current release metadata points to a Gitea-hosted bundle. Gitea publishing is manual; a successful GitHub build alone does not publish a new Morphe source version.
+To publish a new version, manually run the GitHub [**Publish Infinity+ source** workflow](.github/workflows/publish-infinity-source.yml) on `main`. It uses the `github-infinity` self-hosted runner to build the `.mpp` bundle, publishes a GitHub Release, and commits an updated `patches-bundle.json` pointing to the GitHub release asset. The separate **Build Infinity+ patches** workflow only uploads a workflow artifact and does not publish a new Morphe source version.
 
 The patch source metadata is stored in [`patches-bundle.json`](patches-bundle.json), and the current version is controlled by the project build configuration.
 
