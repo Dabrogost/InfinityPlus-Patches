@@ -1,6 +1,6 @@
 # Infinity+ Patches
 
-A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity+ for Reddit**, based on [Patcheddit](https://github.com/wchill/patcheddit) v1.4.0 and incorporating the Infinity+ 8.3.x compatibility change proposed in [PR #108](https://github.com/wchill/patcheddit/pull/108).
+A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity for Reddit+**, based on [Patcheddit](https://github.com/wchill/patcheddit) v1.4.0 and incorporating the Infinity+ 8.3.x compatibility change proposed in [PR #108](https://github.com/wchill/patcheddit/pull/108).
 
 This project maintains only the Infinity+ patches, removing implementations for unrelated Reddit clients.
 
