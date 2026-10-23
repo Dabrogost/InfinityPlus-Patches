@@ -68,6 +68,33 @@ internal val billingClientOnServiceConnectedFingerprint = Fingerprint(
     strings = listOf("Billing service connected")
 )
 
+// Subscription launcher fingerprints, newest app layout first. disableBillingPatch applies
+// the first one that matches and fails if none do.
+
+// Infinity+ 8.3.4+: Infinity.f() no longer builds the subscription Intent itself. It checks a
+// flag and then hands the Context, a boolean and the Intent flags (0x10008000) to a static
+// helper that creates and starts SubscriptionActivityNew. The helper's name is obfuscated
+// (za3.X in 8.3.4), so match on its signature, built only from framework types, rather than
+// on its name.
+internal val infinityStartSubscriptionActivityHelperFingerprint = Fingerprint(
+    definingClass = "Lml/docilealligator/infinityforreddit/Infinity;",
+    parameters = emptyList(),
+    returnType = "V",
+    filters = listOf(
+        literal(0x10008000),
+        methodCall(
+            parameters = listOf(
+                "Landroid/content/Context;",
+                "Z",
+                "Ljava/lang/Integer;"
+            ),
+            returnType = "V",
+            opcode = Opcode.INVOKE_STATIC
+        )
+    )
+)
+
+// Older layout: Infinity.f() constructs the Intent directly.
 internal val infinityStartSubscriptionActivityFingerprint = Fingerprint(
     definingClass = "Lml/docilealligator/infinityforreddit/Infinity;",
     filters = listOf(
@@ -79,7 +106,7 @@ internal val infinityStartSubscriptionActivityFingerprint = Fingerprint(
         literal(0x10008000)
     )
 )
-// Infinity+ 8.3.x moved its subscription launch into SubscriptionActivityNew.
+// Infinity+ 8.3.x (before 8.3.4) moved its subscription launch into SubscriptionActivityNew.
 // Based on Adiker's upstream PR: https://github.com/wchill/patcheddit/pull/108
 internal val infinityStartSubscriptionActivityNewFingerprint = Fingerprint(
     definingClass = "Lml/docilealligator/infinityforreddit/Infinity;",

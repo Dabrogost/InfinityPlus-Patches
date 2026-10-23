@@ -8,6 +8,7 @@
 package app.morphe.patches.reddit.customclients.infinity.api
 
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patches.reddit.customclients.infinity.InfinityCompatible
@@ -34,8 +35,20 @@ private val disableBillingPatch = bytecodePatch(
 ) {
     execute {
         billingClientOnServiceConnectedFingerprint.methodOrNull?.returnEarly()
-        infinityStartSubscriptionActivityFingerprint.methodOrNull?.returnEarly()
-        infinityStartSubscriptionActivityNewFingerprint.methodOrNull?.returnEarly()
+
+        // Exactly one launcher layout exists per app version. Apply the first that matches and
+        // fail loudly if none do, instead of silently leaving the subscription screen reachable.
+        val subscriptionLauncher = listOf(
+            infinityStartSubscriptionActivityHelperFingerprint,
+            infinityStartSubscriptionActivityNewFingerprint,
+            infinityStartSubscriptionActivityFingerprint
+        ).firstNotNullOfOrNull { it.methodOrNull }
+            ?: throw PatchException(
+                "Unable to find the Infinity+ subscription launcher. " +
+                    "This app version is not supported by the Spoof client patch."
+            )
+
+        subscriptionLauncher.returnEarly()
     }
 }
 
