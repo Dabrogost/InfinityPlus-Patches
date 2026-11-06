@@ -1,4 +1,4 @@
-# Infinity+ Patches
+# InfinityPlus-Patches <a href="https://github.com/Dabrogost/InfinityPlus-Patches/releases"><img align="right" src="https://img.shields.io/github/downloads/Dabrogost/InfinityPlus-Patches/total?color=1f6feb&logo=github" alt="Downloads"></a>
 
 A lightweight [Morphe](https://morphe.software/) patch bundle for **Infinity for Reddit+**, based on [Patcheddit](https://github.com/wchill/patcheddit) v1.4.0 and incorporating the Infinity+ 8.3.x compatibility change proposed in [PR #108](https://github.com/wchill/patcheddit/pull/108).
 
